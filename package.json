@@ -1,0 +1,33 @@
+{
+  "name": "molinar-game-sdk",
+  "version": "1.0.0",
+  "description": "Core game SDK for Molinar 3D games - controls, movement, camera, multiplayer",
+  "main": "src/index.js",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./controls": "./src/controls.js",
+    "./movement": "./src/movement.js",
+    "./camera": "./src/camera.js",
+    "./multiplayer": "./src/multiplayer.js",
+    "./factories": "./src/factories.js",
+    "./constants": "./src/constants.js",
+    "./math": "./src/math.js"
+  },
+  "peerDependencies": {
+    "three": ">=0.150.0"
+  },
+  "keywords": [
+    "game",
+    "3d",
+    "threejs",
+    "multiplayer",
+    "molinar"
+  ],
+  "author": "matthewmolinar",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/matthewmolinar/molinar-game-sdk.git"
+  }
+}
