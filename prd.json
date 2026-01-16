@@ -1,0 +1,181 @@
+{
+  "project": "molinar-game-sdk",
+  "branchName": "ralph/sdk-consolidation",
+  "description": "Consolidate and complete the Molinar Game SDK by adding missing factories functions from 3d_world_template",
+  "constraints": {
+    "FORBIDDEN_FILES": [
+      "src/controls.js - DO NOT MODIFY - working perfectly",
+      "src/movement.js - DO NOT MODIFY - working perfectly",
+      "src/camera.js - DO NOT MODIFY - working perfectly",
+      "src/math.js - DO NOT MODIFY - working perfectly",
+      "src/constants.js - DO NOT MODIFY - working perfectly",
+      "src/multiplayer.js - DO NOT MODIFY - working perfectly"
+    ],
+    "ONLY_MODIFY": [
+      "src/factories.js - ADD functions only, do not change existing functions",
+      "src/index.js - ADD exports only for new functions"
+    ],
+    "CRITICAL": "The controls, movement, camera systems are LOCKED. Any modification to these files will break production games. Only ADD to factories.js."
+  },
+  "sourceReference": "/Users/molinar/molinar_workspace/molinar/3d_world_template/libs/game/factories.js",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Add createCabin factory function",
+      "description": "Copy createCabin from 3d_world_template/libs/game/factories.js (line ~305) to SDK factories.js",
+      "acceptanceCriteria": [
+        "Function createCabin(width, depth, rng) exists in src/factories.js",
+        "Function signature matches template exactly",
+        "Function is exported from src/index.js",
+        "No modifications to controls.js, movement.js, camera.js, math.js, constants.js"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Add createHouse factory function",
+      "description": "Copy createHouse from 3d_world_template/libs/game/factories.js (line ~365) to SDK factories.js",
+      "acceptanceCriteria": [
+        "Function createHouse(width, depth, rng) exists in src/factories.js",
+        "Function signature matches template exactly",
+        "Function is exported from src/index.js",
+        "No modifications to controls.js, movement.js, camera.js, math.js, constants.js"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Add createTower factory function",
+      "description": "Copy createTower from 3d_world_template/libs/game/factories.js (line ~445) to SDK factories.js",
+      "acceptanceCriteria": [
+        "Function createTower(width, depth, floors, rng) exists in src/factories.js",
+        "Function signature matches template exactly",
+        "Function is exported from src/index.js",
+        "No modifications to controls.js, movement.js, camera.js, math.js, constants.js"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Add createRandomBuilding factory function",
+      "description": "Copy createRandomBuilding from 3d_world_template/libs/game/factories.js (line ~522) to SDK factories.js",
+      "acceptanceCriteria": [
+        "Function createRandomBuilding(rng) exists in src/factories.js",
+        "Function signature matches template exactly",
+        "Function is exported from src/index.js",
+        "No modifications to controls.js, movement.js, camera.js, math.js, constants.js"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Add createCloud factory function",
+      "description": "Copy createCloud from 3d_world_template/libs/game/factories.js (line ~239) to SDK factories.js",
+      "acceptanceCriteria": [
+        "Function createCloud(x, y, z, scale) exists in src/factories.js",
+        "Function signature matches template exactly",
+        "Function is exported from src/index.js",
+        "No modifications to controls.js, movement.js, camera.js, math.js, constants.js"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Add fence factory functions",
+      "description": "Copy createFence, createFenceCorner, createFencePost, createGate from 3d_world_template/libs/game/factories.js to SDK factories.js",
+      "acceptanceCriteria": [
+        "Function createFence(style) exists in src/factories.js",
+        "Function createFenceCorner() exists in src/factories.js",
+        "Function createFencePost(height) exists in src/factories.js (internal helper)",
+        "Function createGate() exists in src/factories.js",
+        "All function signatures match template exactly",
+        "Functions are exported from src/index.js",
+        "No modifications to controls.js, movement.js, camera.js, math.js, constants.js"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Add createLilypad and createBridge factory functions",
+      "description": "Copy createLilypad and createBridge from 3d_world_template/libs/game/factories.js to SDK factories.js",
+      "acceptanceCriteria": [
+        "Function createLilypad(size) exists in src/factories.js",
+        "Function createBridge(width, length) exists in src/factories.js",
+        "All function signatures match template exactly",
+        "Functions are exported from src/index.js",
+        "No modifications to controls.js, movement.js, camera.js, math.js, constants.js"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Add createButterfly factory function",
+      "description": "Copy createButterfly from 3d_world_template/libs/game/factories.js (line ~881) to SDK factories.js",
+      "acceptanceCriteria": [
+        "Function createButterfly(color) exists in src/factories.js",
+        "Function signature matches template exactly",
+        "Function is exported from src/index.js",
+        "No modifications to controls.js, movement.js, camera.js, math.js, constants.js"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Add POCHI platform factory functions",
+      "description": "Copy createPochiPlatform and animatePochiPlatform from 3d_world_template/libs/game/factories.js to SDK factories.js",
+      "acceptanceCriteria": [
+        "Function createPochiPlatform() exists in src/factories.js",
+        "Function animatePochiPlatform(platform, dt, playerPos) exists in src/factories.js",
+        "All function signatures match template exactly",
+        "Functions are exported from src/index.js",
+        "No modifications to controls.js, movement.js, camera.js, math.js, constants.js"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Verify SDK integration with 3d_world_template",
+      "description": "Update 3d_world_template to import from molinar-game-sdk instead of local libs/game and verify game still works",
+      "acceptanceCriteria": [
+        "3d_world_template package.json has molinar-game-sdk as dependency (file: path)",
+        "Imports in 3d_world_template updated to use 'molinar-game-sdk' or 'molinar-game-sdk/factories'",
+        "npm run build succeeds in 3d_world_template",
+        "No modifications to SDK controls.js, movement.js, camera.js, math.js, constants.js"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Clean up duplicate SDK files",
+      "description": "Remove duplicate molinar-sdk.js files from other projects that should use the central SDK",
+      "acceptanceCriteria": [
+        "Document which projects have duplicate SDK files",
+        "Create migration plan for each project",
+        "No modifications to SDK controls.js, movement.js, camera.js, math.js, constants.js"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}

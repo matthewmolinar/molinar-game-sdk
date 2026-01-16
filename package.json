@@ -1,6 +1,9 @@
 {
-  "name": "molinar-game-sdk",
-  "version": "1.0.0",
+  "name": "@matthewmolinar/game-sdk",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "version": "1.0.1",
   "description": "Core game SDK for Molinar 3D games - controls, movement, camera, multiplayer",
   "main": "src/index.js",
   "type": "module",

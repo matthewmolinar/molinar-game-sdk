@@ -1,0 +1,45 @@
+## Codebase Patterns
+
+**CRITICAL - READ FIRST:**
+- NEVER modify src/controls.js - LOCKED
+- NEVER modify src/movement.js - LOCKED
+- NEVER modify src/camera.js - LOCKED
+- NEVER modify src/math.js - LOCKED
+- NEVER modify src/constants.js - LOCKED
+- NEVER modify src/multiplayer.js - LOCKED
+
+**Allowed:**
+- ADD functions to src/factories.js (copy exactly from 3d_world_template)
+- ADD exports to src/index.js (for new factory functions)
+
+**Source:**
+- Copy factory functions from: /Users/molinar/molinar_workspace/molinar/3d_world_template/libs/game/factories.js
+- Preserve exact function signatures
+- Do not refactor or "improve" - copy verbatim
+
+**Factory Pattern:**
+- All factories return THREE.Group
+- Use PALETTE colors from constants.js
+- Use rng parameter for deterministic randomness
+
+---
+
+## Initial Setup - 2024-01-15
+
+- Ralph configured for SDK consolidation
+- PRD created with 11 user stories for adding missing factories
+- Locked files documented in AGENTS.md
+- Prompt.md customized with pre-commit verification checklist
+
+**Missing factories to add:**
+1. createCabin
+2. createHouse
+3. createTower
+4. createRandomBuilding
+5. createCloud
+6. createFence, createFenceCorner, createFencePost, createGate
+7. createLilypad, createBridge
+8. createButterfly
+9. createPochiPlatform, animatePochiPlatform
+
+---

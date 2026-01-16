@@ -1,10 +1,6 @@
 import * as THREE from "three";
-import * as BufferGeometryUtils from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { PALETTE } from "./constants";
 import { randFloat, randInt, choice } from "./math";
-
-// Attach BufferGeometryUtils to THREE namespace for generated code
-THREE.BufferGeometryUtils = BufferGeometryUtils;
 
 // Colors for other players in multiplayer
 const OTHER_PLAYER_COLORS = [
