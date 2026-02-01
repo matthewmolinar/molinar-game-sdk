@@ -76,6 +76,7 @@ class ShellBridge {
     this._coins = 0;
     this._isAuthenticated = false;
     this._isAdmin = false; // Admin status from shell (validated server-side)
+    this._flyModeEnabled = false; // Fly mode status from shell
     this._isEmbedded = typeof window !== 'undefined' && window.parent !== window;
 
     if (typeof window !== 'undefined') {
@@ -124,6 +125,13 @@ class ShellBridge {
       // Chat message from shell
       if (type === 'molinar-chat-send') {
         this._dispatchEvent('shell-chat-send', event.data.payload);
+        return;
+      }
+
+      // Fly mode from shell
+      if (type === 'molinar-fly-mode') {
+        this._flyModeEnabled = event.data.payload?.enabled === true;
+        this._dispatchEvent('shell-fly-mode', { enabled: this._flyModeEnabled });
         return;
       }
     });
@@ -304,6 +312,14 @@ class ShellBridge {
    */
   isAdmin() {
     return this._isAdmin;
+  }
+
+  /**
+   * Check if fly mode is enabled (controlled by shell)
+   * @returns {boolean}
+   */
+  isFlyModeEnabled() {
+    return this._flyModeEnabled;
   }
 
   /**
