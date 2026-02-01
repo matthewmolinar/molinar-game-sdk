@@ -119,6 +119,12 @@ class ShellBridge {
         this._dispatchEvent('shell-request-coins', {});
         return;
       }
+
+      // Chat message from shell
+      if (type === 'molinar-chat-send') {
+        this._dispatchEvent('shell-chat-send', event.data.payload);
+        return;
+      }
     });
 
     // In standalone mode, check existing session
