@@ -74,6 +74,7 @@ class ShellBridge {
     this._user = null;
     this._accessToken = null;
     this._coins = 0;
+    this._profile = null; // Profile data passed from shell (eliminates re-fetch)
     this._isAuthenticated = false;
     this._isAdmin = false; // Admin status from shell (validated server-side)
     this._flyModeEnabled = false; // Fly mode status from shell
@@ -146,7 +147,7 @@ class ShellBridge {
    * Handle auth message from shell
    */
   async _handleAuth(payload) {
-    const { access_token, refresh_token, user, coins, isAdmin } = payload || {};
+    const { access_token, refresh_token, user, coins, isAdmin, profile } = payload || {};
 
     if (!access_token) {
       console.warn('[ShellBridge] Auth message missing access_token');
@@ -172,9 +173,20 @@ class ShellBridge {
       }
 
       this._accessToken = access_token;
-      this._coins = typeof coins === 'number' ? coins : 0;
+      this._coins = typeof coins === 'number' ? coins : (profile?.coins || 0);
       this._isAdmin = isAdmin === true; // Only true if explicitly set by shell
       this._isAuthenticated = true;
+
+      // Store profile data from shell (eliminates need to re-fetch)
+      if (profile) {
+        this._profile = Object.freeze({
+          color: profile.color,
+          name: profile.name,
+          accessories: profile.accessories ? [...profile.accessories] : [],
+          coins: profile.coins || 0,
+        });
+        console.log('[ShellBridge] Profile received from shell:', this._profile);
+      }
 
       console.log('[ShellBridge] Auth synced, user:', this._user?.id, 'coins:', this._coins, 'isAdmin:', this._isAdmin);
 
@@ -187,7 +199,8 @@ class ShellBridge {
       // Dispatch ready event
       this._dispatchEvent('shell-auth-ready', {
         user: this._user,
-        coins: this._coins
+        coins: this._coins,
+        profile: this._profile
       });
 
     } catch (err) {
@@ -288,6 +301,15 @@ class ShellBridge {
    */
   getCoins() {
     return this._coins;
+  }
+
+  /**
+   * Get profile data passed from shell (FROZEN - immutable)
+   * Returns null if profile wasn't passed from shell
+   * @returns {object|null} { color, name, accessories, coins }
+   */
+  getProfile() {
+    return this._profile;
   }
 
   /**
