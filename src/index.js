@@ -97,5 +97,13 @@ export {
   resetRandom,
   createPositionRandom,
   getWorldSeed,
-  setWorldSeed,
 } from './math.js';
+
+// Shell Bridge - secure communication with Game Clips shell
+// Handles auth, coins signaling, input from parent
+export {
+  initShellBridge,
+  getShellBridge,
+  useShellBridge,
+  setShellSupabase,
+} from './shell-bridge.js';
