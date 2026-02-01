@@ -75,6 +75,7 @@ class ShellBridge {
     this._accessToken = null;
     this._coins = 0;
     this._isAuthenticated = false;
+    this._isAdmin = false; // Admin status from shell (validated server-side)
     this._isEmbedded = typeof window !== 'undefined' && window.parent !== window;
 
     if (typeof window !== 'undefined') {
@@ -137,7 +138,7 @@ class ShellBridge {
    * Handle auth message from shell
    */
   async _handleAuth(payload) {
-    const { access_token, refresh_token, user, coins } = payload || {};
+    const { access_token, refresh_token, user, coins, isAdmin } = payload || {};
 
     if (!access_token) {
       console.warn('[ShellBridge] Auth message missing access_token');
@@ -164,9 +165,10 @@ class ShellBridge {
 
       this._accessToken = access_token;
       this._coins = typeof coins === 'number' ? coins : 0;
+      this._isAdmin = isAdmin === true; // Only true if explicitly set by shell
       this._isAuthenticated = true;
 
-      console.log('[ShellBridge] Auth synced, user:', this._user?.id, 'coins:', this._coins);
+      console.log('[ShellBridge] Auth synced, user:', this._user?.id, 'coins:', this._coins, 'isAdmin:', this._isAdmin);
 
       // Resolve waiting promises
       if (authResolve) {
@@ -294,6 +296,14 @@ class ShellBridge {
    */
   isAuthenticated() {
     return this._isAuthenticated;
+  }
+
+  /**
+   * Check if user is admin (validated server-side by shell)
+   * @returns {boolean}
+   */
+  isAdmin() {
+    return this._isAdmin;
   }
 
   /**
