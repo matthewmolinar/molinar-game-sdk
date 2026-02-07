@@ -184,8 +184,19 @@ let BIOME_POOL = [];
 function rebuildBiomePool(weights) {
   BIOME_POOL.length = 0;
   for (const [name, weight] of Object.entries(weights)) {
-    for (let i = 0; i < weight; i++) {
+    if (!BIOMES[name]) {
+      console.warn(`setBiomeConfig: unknown biome "${name}" — skipped`);
+      continue;
+    }
+    const count = Math.max(0, Math.floor(weight));
+    for (let i = 0; i < count; i++) {
       BIOME_POOL.push(name);
+    }
+  }
+  if (BIOME_POOL.length === 0) {
+    console.warn('setBiomeConfig: biomeWeights produced empty pool — resetting to defaults');
+    for (const [name, weight] of Object.entries(DEFAULT_BIOME_WEIGHTS)) {
+      for (let i = 0; i < weight; i++) BIOME_POOL.push(name);
     }
   }
 }
@@ -203,7 +214,7 @@ export function resetBiomes() {
  * Get the active biome chunk size (respects override from setBiomeConfig).
  */
 export function getBiomeChunkSize() {
-  return customBiomeChunkSize || BIOME_CHUNK_SIZE_DEFAULT;
+  return customBiomeChunkSize ?? BIOME_CHUNK_SIZE_DEFAULT;
 }
 
 /**
@@ -216,7 +227,7 @@ export function getBiomeChunkSize() {
 export function setBiomeConfig(config) {
   if (!config) return;
 
-  if (config.biomeWeights && typeof config.biomeWeights === 'object') {
+  if (config.biomeWeights && typeof config.biomeWeights === 'object' && !Array.isArray(config.biomeWeights) && Object.getPrototypeOf(config.biomeWeights) === Object.prototype) {
     rebuildBiomePool(config.biomeWeights);
   } else if (config.biomeWeights === null) {
     rebuildBiomePool(DEFAULT_BIOME_WEIGHTS);
