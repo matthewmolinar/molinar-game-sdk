@@ -116,7 +116,10 @@ export const BIOMES = {
 };
 
 // Biome chunk generation settings
-export const BIOME_CHUNK_SIZE = 18; // Lanes per biome chunk
+let customBiomeChunkSize = null;
+export const BIOME_CHUNK_SIZE_DEFAULT = 18;
+// Use getter pattern: import { getBiomeChunkSize } from ... or use BIOME_CHUNK_SIZE (static default)
+export const BIOME_CHUNK_SIZE = 18; // Lanes per biome chunk (static default for backward compat)
 export const BIOME_TRANSITION_SIZE = 4; // Lanes to blend between biomes
 
 // Distance tiers - progressive world transformation
@@ -168,7 +171,7 @@ export function getDistanceTier(z, x = 0) {
 }
 
 // Biome weights for random selection (higher = more common)
-const BIOME_WEIGHTS = {
+const DEFAULT_BIOME_WEIGHTS = {
   forest: 3,
   sakura: 2,
   autumn: 2,
@@ -176,13 +179,17 @@ const BIOME_WEIGHTS = {
   snow: 1,
 };
 
-// Build weighted array for random selection
-const BIOME_POOL = [];
-for (const [name, weight] of Object.entries(BIOME_WEIGHTS)) {
-  for (let i = 0; i < weight; i++) {
-    BIOME_POOL.push(name);
+// Build weighted array for random selection (mutable — rebuilt by setBiomeConfig)
+let BIOME_POOL = [];
+function rebuildBiomePool(weights) {
+  BIOME_POOL.length = 0;
+  for (const [name, weight] of Object.entries(weights)) {
+    for (let i = 0; i < weight; i++) {
+      BIOME_POOL.push(name);
+    }
   }
 }
+rebuildBiomePool(DEFAULT_BIOME_WEIGHTS);
 
 // Cache for computed biomes (performance optimization, not needed for determinism)
 const biomeCache = new Map();
@@ -192,11 +199,45 @@ export function resetBiomes() {
   biomeCache.clear();
 }
 
+/**
+ * Get the active biome chunk size (respects override from setBiomeConfig).
+ */
+export function getBiomeChunkSize() {
+  return customBiomeChunkSize || BIOME_CHUNK_SIZE_DEFAULT;
+}
+
+/**
+ * Override biome weights and/or chunk size for a custom world.
+ * Call after setRandomSeed() when initializing a world.
+ * Pass null/undefined values to reset to defaults.
+ *
+ * @param {{ biomeWeights?: object|null, biomeChunkSize?: number|null }} config
+ */
+export function setBiomeConfig(config) {
+  if (!config) return;
+
+  if (config.biomeWeights && typeof config.biomeWeights === 'object') {
+    rebuildBiomePool(config.biomeWeights);
+  } else if (config.biomeWeights === null) {
+    rebuildBiomePool(DEFAULT_BIOME_WEIGHTS);
+  }
+
+  if (typeof config.biomeChunkSize === 'number' && config.biomeChunkSize > 0) {
+    customBiomeChunkSize = config.biomeChunkSize;
+  } else if (config.biomeChunkSize === null) {
+    customBiomeChunkSize = null;
+  }
+
+  // Clear cache so biomes regenerate with new settings
+  biomeCache.clear();
+}
+
 // Get cell indices for a position (2D biome grid)
 function getCellIndices(x, z) {
+  const chunkSize = getBiomeChunkSize();
   return {
-    cellX: Math.floor(x / BIOME_CHUNK_SIZE),
-    cellZ: Math.floor(z / BIOME_CHUNK_SIZE)
+    cellX: Math.floor(x / chunkSize),
+    cellZ: Math.floor(z / chunkSize)
   };
 }
 
@@ -225,9 +266,10 @@ function getBiomeForCell(cellX, cellZ) {
 // Biome type (forest, desert, etc.) is based on 2D cell position
 // Tier effects (alien, mythic, etc.) are based on distance from origin
 export function getBiomeForZ(z, x = 0) {
+  const chunkSize = getBiomeChunkSize();
   const { cellX, cellZ } = getCellIndices(x, z);
-  const posInCellX = x - (cellX * BIOME_CHUNK_SIZE);
-  const posInCellZ = z - (cellZ * BIOME_CHUNK_SIZE);
+  const posInCellX = x - (cellX * chunkSize);
+  const posInCellZ = z - (cellZ * chunkSize);
 
   const currentBiomeName = getBiomeForCell(cellX, cellZ);
   const currentBiome = BIOMES[currentBiomeName];
@@ -251,10 +293,10 @@ export function getBiomeForZ(z, x = 0) {
   }
 
   // X-direction transition (near +X edge of cell)
-  if (posInCellX > (BIOME_CHUNK_SIZE - BIOME_TRANSITION_SIZE)) {
+  if (posInCellX > (chunkSize - BIOME_TRANSITION_SIZE)) {
     const neighborBiomeName = getBiomeForCell(cellX + 1, cellZ);
     const neighborBiome = BIOMES[neighborBiomeName];
-    const blendFactor = (BIOME_CHUNK_SIZE - posInCellX) / BIOME_TRANSITION_SIZE;
+    const blendFactor = (chunkSize - posInCellX) / BIOME_TRANSITION_SIZE;
     baseBiome = blendBiomes(baseBiome, neighborBiome, 1 - blendFactor);
   }
 
