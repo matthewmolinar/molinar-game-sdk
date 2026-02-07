@@ -70,6 +70,12 @@ export function setRandomSeed(seed) {
 }
 
 /**
+ * Set the world seed (alias for setRandomSeed)
+ * @param {number} seed - The seed value
+ */
+export const setWorldSeed = setRandomSeed;
+
+/**
  * Reset to using Math.random (non-deterministic)
  */
 export function resetRandom() {

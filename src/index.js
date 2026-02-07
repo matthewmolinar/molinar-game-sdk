@@ -94,6 +94,7 @@ export {
   choice,
   heightAtZ,
   setRandomSeed,
+  setWorldSeed,
   resetRandom,
   createPositionRandom,
   getWorldSeed,
