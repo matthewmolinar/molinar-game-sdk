@@ -57,6 +57,7 @@ export function createMultiplayerManager(worldId = 'portal') {
   let onPing = null;
   let onTeleportRequest = null;
   let onTeleportResponse = null;
+  let onError = null;
 
   /**
    * Generate a unique player ID
@@ -142,6 +143,7 @@ export function createMultiplayerManager(worldId = 'portal') {
       };
     } catch (e) {
       console.error('Error loading customization from DB:', e);
+      if (onError) onError(e);
       return null;
     }
   }
@@ -295,7 +297,7 @@ export function createMultiplayerManager(worldId = 'portal') {
     });
 
     // Subscribe and wait for it to complete
-    await new Promise((resolve) => {
+    await new Promise((resolve, reject) => {
       channel.subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
           console.log("Channel subscribed, tracking presence...");
@@ -325,6 +327,11 @@ export function createMultiplayerManager(worldId = 'portal') {
           }, 20000);
 
           resolve();
+        } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
+          const error = new Error(`Multiplayer channel failed: ${status}`);
+          console.error(error.message);
+          if (onError) onError(error);
+          reject(error);
         }
       });
     });
@@ -346,6 +353,7 @@ export function createMultiplayerManager(worldId = 'portal') {
 
     if (fetchError && fetchError.code !== "PGRST116") {
       console.error("Error fetching world:", fetchError);
+      if (onError) onError(new Error(`Error fetching world: ${fetchError.message || fetchError.code}`));
     }
 
     if (existingWorld) {
@@ -380,6 +388,8 @@ export function createMultiplayerManager(worldId = 'portal') {
 
       if (insertError) {
         // Race condition - someone else created the world first
+        console.error("World insert race condition:", insertError);
+        if (onError) onError(new Error(`World insert race condition: ${insertError.message || insertError.code}`));
         const { data: raceWorld } = await supabase
           .from("worlds")
           .select("*")
@@ -542,6 +552,13 @@ export function createMultiplayerManager(worldId = 'portal') {
   }
 
   /**
+   * Set callback for errors (allows consumers to hook into SDK errors without SDK depending on Sentry)
+   */
+  function setOnError(callback) {
+    onError = callback;
+  }
+
+  /**
    * Broadcast a chat message
    */
   function broadcastChat(text) {
@@ -694,6 +711,7 @@ export function createMultiplayerManager(worldId = 'portal') {
       }
     } catch (e) {
       console.error('Error saving customization:', e);
+      if (onError) onError(e);
     }
   }
 
@@ -825,6 +843,7 @@ export function createMultiplayerManager(worldId = 'portal') {
     setOnPing,
     setOnTeleportRequest,
     setOnTeleportResponse,
+    setOnError,
     getPlayers,
     getPlayerId,
     getPlayerName,
