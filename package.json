@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Core game SDK for Molinar 3D games - controls, movement, camera, multiplayer",
   "main": "src/index.js",
   "type": "module",
@@ -32,5 +32,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/matthewmolinar/molinar-game-sdk.git"
+  },
+  "dependencies": {
+    "@matthewmolinar/game-sdk": "^1.0.4"
   }
 }
