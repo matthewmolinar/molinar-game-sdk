@@ -27,9 +27,9 @@ const PLAYER_COLORS = [
  * Uses Supabase Realtime for player synchronization.
  * Presence is the source of truth for connected players.
  *
- * @param {string} worldId - The world ID to connect to (defaults to 'portal')
+ * @param {string} worldId - The world ID to connect to (defaults to 'main')
  */
-export function createMultiplayerManager(worldId = 'portal') {
+export function createMultiplayerManager(worldId = 'main') {
   if (!_supabaseClient) {
     throw new Error('Supabase client not set. Call setSupabaseClient() first.');
   }
