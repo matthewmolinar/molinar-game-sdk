@@ -48,6 +48,15 @@ export {
   normalizeAngle,
 } from './camera.js';
 
+// First-person camera (Iron Man suit)
+export {
+  createFirstPersonState,
+  updateFirstPersonCamera,
+  applyFirstPersonLook,
+  enterFirstPerson,
+  exitFirstPerson,
+} from './firstPersonCamera.js';
+
 // Multiplayer - Supabase Realtime player sync
 export {
   setSupabaseClient,

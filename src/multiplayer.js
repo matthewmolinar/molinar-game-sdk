@@ -814,6 +814,14 @@ export function createMultiplayerManager(worldId = 'main') {
    */
   async function updateSuitEquipped(newSuitId) {
     suitEquipped = newSuitId;
+    // Save to localStorage for persistence (consistent with other update* functions)
+    if (typeof window !== 'undefined') {
+      if (newSuitId) {
+        localStorage.setItem('suitEquipped', newSuitId);
+      } else {
+        localStorage.removeItem('suitEquipped');
+      }
+    }
     if (channel) {
       await channel.track({
         playerId,
@@ -832,6 +840,13 @@ export function createMultiplayerManager(worldId = 'main') {
    */
   function getPlayerAccessories() {
     return playerAccessories;
+  }
+
+  /**
+   * Get this player's equipped suit
+   */
+  function getSuitEquipped() {
+    return suitEquipped;
   }
 
   /**
@@ -882,7 +897,7 @@ export function createMultiplayerManager(worldId = 'main') {
     updatePlayerName,
     updatePlayerAccessories,
     updateSuitEquipped,
-    getSuitEquipped: () => suitEquipped,
+    getSuitEquipped,
     getWorldSeed,
     getWorldId,
     getIsHost,
