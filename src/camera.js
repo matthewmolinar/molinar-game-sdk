@@ -137,3 +137,73 @@ export function handlePinchZoom(cameraState, startDist, currentDist, startZoom) 
     );
   }
 }
+
+// ── First-Person Camera (Iron Man suit) ───────────────────────────
+
+/**
+ * Create first-person camera state
+ */
+export function createFirstPersonState() {
+  return {
+    enabled: false,
+    yaw: 0,
+    pitch: 0,
+    transitionT: 0,
+  };
+}
+
+/**
+ * Update camera for first-person view.
+ */
+export function updateFirstPersonCamera(camera, playerPos, fpState, playerRotation, dt) {
+  if (!fpState.enabled) return;
+
+  const headY = playerPos.y + 1.0;
+  fpState.transitionT = Math.min(fpState.transitionT + dt * 5, 1);
+  const t = fpState.transitionT;
+
+  const targetPos = new THREE.Vector3(playerPos.x, headY, playerPos.z);
+  camera.position.lerp(targetPos, t);
+
+  const lookYaw = fpState.yaw;
+  const lookPitch = THREE.MathUtils.clamp(fpState.pitch, -1.2, 1.2);
+
+  const lookDir = new THREE.Vector3(
+    Math.sin(lookYaw) * Math.cos(lookPitch),
+    Math.sin(lookPitch),
+    Math.cos(lookYaw) * Math.cos(lookPitch)
+  );
+
+  const lookTarget = new THREE.Vector3().copy(camera.position).add(lookDir);
+  camera.lookAt(lookTarget);
+  camera.rotation.z = 0;
+}
+
+/**
+ * Apply mouse/touch look deltas to first-person state
+ */
+export function applyFirstPersonLook(fpState, deltaX, deltaY) {
+  if (!fpState.enabled) return;
+  const sensitivity = 0.003;
+  fpState.yaw -= deltaX * sensitivity;
+  fpState.pitch -= deltaY * sensitivity;
+  fpState.pitch = THREE.MathUtils.clamp(fpState.pitch, -1.2, 1.2);
+}
+
+/**
+ * Enter first-person mode
+ */
+export function enterFirstPerson(fpState, cameraState) {
+  fpState.enabled = true;
+  fpState.transitionT = 0;
+  fpState.yaw = cameraState.orbitAngle + Math.PI;
+  fpState.pitch = 0;
+}
+
+/**
+ * Exit first-person mode
+ */
+export function exitFirstPerson(fpState) {
+  fpState.enabled = false;
+  fpState.transitionT = 0;
+}
