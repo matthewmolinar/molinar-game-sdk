@@ -155,7 +155,7 @@ export function createFirstPersonState() {
 /**
  * Update camera for first-person view.
  */
-export function updateFirstPersonCamera(camera, playerPos, fpState, playerRotation, dt) {
+export function updateFirstPersonCamera(camera, playerPos, fpState, dt) {
   if (!fpState.enabled) return;
 
   const headY = playerPos.y + 1.0;

@@ -141,6 +141,7 @@ export function createMultiplayerManager(worldId = 'main') {
         color: data.avatar_color,
         accessories: data.accessory_ids || [],
         name: data.avatar_name,
+        suitEquipped: data.suit_equipped || null,
       };
     } catch (e) {
       console.error('Error loading customization from DB:', e);
@@ -170,6 +171,7 @@ export function createMultiplayerManager(worldId = 'main') {
       playerName = dbCustomization.name || generatePlayerName();
       playerColor = dbCustomization.color || getPlayerColor(playerId);
       playerAccessories = dbCustomization.accessories || [];
+      suitEquipped = dbCustomization.suitEquipped || null;
 
       // Sync to localStorage so it's available elsewhere
       if (typeof window !== 'undefined') {
