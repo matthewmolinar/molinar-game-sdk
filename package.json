@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Core game SDK for Molinar 3D games - controls, movement, camera, multiplayer",
   "main": "src/index.js",
   "type": "module",
@@ -12,6 +12,7 @@
     "./controls": "./src/controls.js",
     "./movement": "./src/movement.js",
     "./camera": "./src/camera.js",
+    "./firstPersonCamera": "./src/firstPersonCamera.js",
     "./multiplayer": "./src/multiplayer.js",
     "./factories": "./src/factories.js",
     "./constants": "./src/constants.js",
