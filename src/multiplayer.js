@@ -42,6 +42,7 @@ export function createMultiplayerManager(worldId = 'main') {
   let playerName = null;
   let playerColor = null;
   let playerAccessories = []; // Array of accessory IDs like ["sunglasses", "topHat"]
+  let suitEquipped = null; // Currently equipped suit ID (e.g., 'iron-man')
   let isHost = false;
   let worldSeed = null;
   let lastBroadcastTime = 0;
@@ -140,6 +141,7 @@ export function createMultiplayerManager(worldId = 'main') {
         color: data.avatar_color,
         accessories: data.accessory_ids || [],
         name: data.avatar_name,
+        suitEquipped: data.suit_equipped || null,
       };
     } catch (e) {
       console.error('Error loading customization from DB:', e);
@@ -169,6 +171,7 @@ export function createMultiplayerManager(worldId = 'main') {
       playerName = dbCustomization.name || generatePlayerName();
       playerColor = dbCustomization.color || getPlayerColor(playerId);
       playerAccessories = dbCustomization.accessories || [];
+      suitEquipped = dbCustomization.suitEquipped || null;
 
       // Sync to localStorage so it's available elsewhere
       if (typeof window !== 'undefined') {
@@ -307,6 +310,7 @@ export function createMultiplayerManager(worldId = 'main') {
             playerName,
             playerColor,
             playerAccessories,
+            suitEquipped,
             joinedAt: now,
             lastActive: now,
           });
@@ -320,6 +324,7 @@ export function createMultiplayerManager(worldId = 'main') {
                 playerName,
                 playerColor,
                 playerAccessories,
+                suitEquipped,
                 joinedAt: now,
                 lastActive: Date.now(),
               });
@@ -466,6 +471,7 @@ export function createMultiplayerManager(worldId = 'main') {
         vz,
         isMoving,
         grounded,
+        suitEquipped,
         timestamp: now,
       },
     });
@@ -701,6 +707,7 @@ export function createMultiplayerManager(worldId = 'main') {
           avatar_color: playerColor,
           accessory_ids: playerAccessories,
           avatar_name: playerName,
+          suit_equipped: suitEquipped,
           updated_at: new Date().toISOString(),
         }, {
           onConflict: 'player_id',
@@ -732,6 +739,7 @@ export function createMultiplayerManager(worldId = 'main') {
         playerName,
         playerColor: newColor,
         playerAccessories,
+        suitEquipped,
         joinedAt: Date.now(),
       });
     }
@@ -766,6 +774,7 @@ export function createMultiplayerManager(worldId = 'main') {
         playerName,
         playerColor,
         playerAccessories,
+        suitEquipped,
         joinedAt: Date.now(),
       });
     }
@@ -791,6 +800,7 @@ export function createMultiplayerManager(worldId = 'main') {
         playerName,
         playerColor,
         playerAccessories: newAccessories,
+        suitEquipped,
         joinedAt: Date.now(),
       });
     }
@@ -799,10 +809,44 @@ export function createMultiplayerManager(worldId = 'main') {
   }
 
   /**
+   * Update this player's equipped suit and re-track presence
+   * @param {string|null} newSuitId - Suit ID or null to unequip
+   */
+  async function updateSuitEquipped(newSuitId) {
+    suitEquipped = newSuitId;
+    // Save to localStorage for persistence (consistent with other update* functions)
+    if (typeof window !== 'undefined') {
+      if (newSuitId) {
+        localStorage.setItem('suitEquipped', newSuitId);
+      } else {
+        localStorage.removeItem('suitEquipped');
+      }
+    }
+    if (channel) {
+      await channel.track({
+        playerId,
+        playerName,
+        playerColor,
+        playerAccessories,
+        suitEquipped: newSuitId,
+        joinedAt: Date.now(),
+      });
+    }
+    await saveCustomizationToDb();
+  }
+
+  /**
    * Get this player's accessories
    */
   function getPlayerAccessories() {
     return playerAccessories;
+  }
+
+  /**
+   * Get this player's equipped suit
+   */
+  function getSuitEquipped() {
+    return suitEquipped;
   }
 
   /**
@@ -852,6 +896,8 @@ export function createMultiplayerManager(worldId = 'main') {
     updatePlayerColor,
     updatePlayerName,
     updatePlayerAccessories,
+    updateSuitEquipped,
+    getSuitEquipped,
     getWorldSeed,
     getWorldId,
     getIsHost,
