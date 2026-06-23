@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Core game SDK for Molinar 3D games - controls, movement, camera, multiplayer",
   "main": "src/index.js",
   "type": "module",
@@ -16,7 +16,8 @@
     "./multiplayer": "./src/multiplayer.js",
     "./factories": "./src/factories.js",
     "./constants": "./src/constants.js",
-    "./math": "./src/math.js"
+    "./math": "./src/math.js",
+    "./aimController": "./src/aimController.js"
   },
   "peerDependencies": {
     "three": ">=0.160.0"
@@ -33,8 +34,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/matthewmolinar/molinar-game-sdk.git"
-  },
-  "dependencies": {
-    "@matthewmolinar/game-sdk": "^1.0.4"
   }
 }

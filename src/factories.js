@@ -51,9 +51,56 @@ export function createPlayer(playerMat) {
   // Assemble
   player.add(body, earL, earR, eyeL, eyeR, blushL, blushR, mouth);
   player.userData.ears = { earL, earR };
+
+  // Held-item anchors — empty transforms that a held object (bow, sword, tool…)
+  // can be parented to via attachItem(), so items grip at the right spot in the
+  // hand/side instead of each game guessing a world offset. The body is a 0.9
+  // cube centered at y=0.45 and faces +z.
+  const anchors = {};
+  for (const [name, p] of Object.entries({
+    rightHand: [0.5, 0.45, 0.32],
+    leftHand: [-0.5, 0.45, 0.32],
+    back: [0, 0.6, -0.5],
+    head: [0, 1.0, 0],
+  })) {
+    const anchor = new THREE.Object3D();
+    anchor.name = `anchor:${name}`;
+    anchor.position.set(p[0], p[1], p[2]);
+    player.add(anchor);
+    anchors[name] = anchor;
+  }
+  player.userData.anchors = anchors;
+
   player.position.set(0, 0, 0);
 
   return player;
+}
+
+/**
+ * Attach a held item (bow, sword, tool…) to a player anchor so it follows the
+ * body. Reparents `item` under the named anchor created by createPlayer().
+ * @param {THREE.Object3D} player - a createPlayer/createPlayerWithColor group
+ * @param {THREE.Object3D} item - the mesh/group to hold
+ * @param {'rightHand'|'leftHand'|'back'|'head'} [anchorName]
+ * @param {{offset?: number[], rotation?: number[], scale?: number}} [opts] - local offset/rotation/scale within the anchor
+ * @returns {boolean} true if attached
+ */
+export function attachItem(player, item, anchorName = "rightHand", opts = {}) {
+  const anchor = player?.userData?.anchors?.[anchorName];
+  if (!anchor || !item) return false;
+  const { offset = [0, 0, 0], rotation = [0, 0, 0], scale } = opts;
+  item.position.set(offset[0], offset[1], offset[2]);
+  item.rotation.set(rotation[0], rotation[1], rotation[2]);
+  if (typeof scale === "number") item.scale.setScalar(scale);
+  anchor.add(item);
+  item.userData.heldAnchor = anchorName;
+  return true;
+}
+
+/** Detach a previously attached held item from its anchor. */
+export function detachItem(item) {
+  if (item?.parent) item.parent.remove(item);
+  if (item?.userData) delete item.userData.heldAnchor;
 }
 
 /**
